@@ -6,8 +6,10 @@ import javax.swing.border.BevelBorder;
 import java.util.Random;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class GameJFrame extends JFrame implements KeyListener{
+public class GameJFrame extends JFrame implements KeyListener,ActionListener{
     //JFrame 界面 窗体
     //规定:GameJFrame类是游戏的主界面
     //以后跟游戏相关的逻辑都写在这
@@ -26,6 +28,19 @@ public class GameJFrame extends JFrame implements KeyListener{
 
     //定义一个完成的正确二维数组
     int[][] win = {{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,0}};
+
+    int step = 0;
+
+     //创建选项下面的条目对象
+     JMenuItem replayItem = new JMenuItem("重新游戏");
+    //  JMenuItem reLoginItem = new JMenuItem("重新登录");
+     JMenuItem closeItem = new JMenuItem("关闭游戏");
+
+     JMenuItem accountItem = new JMenuItem("公众号");
+
+     JMenuItem girl = new JMenuItem("美女");
+     JMenuItem animals = new JMenuItem("动物");
+     JMenuItem sport = new JMenuItem("运动");
 
     public GameJFrame(){
         
@@ -68,9 +83,10 @@ public class GameJFrame extends JFrame implements KeyListener{
                 x = i/4;
                 y = i%4;
 
-            }else{
-                data[i/4][i%4] = tempArr[i];
             }
+                
+            data[i/4][i%4] = tempArr[i];
+            
             
         }
     }
@@ -92,6 +108,13 @@ public class GameJFrame extends JFrame implements KeyListener{
             this.getContentPane().add(win);
 
         }
+
+
+        JLabel stepLabel = new JLabel("步数: "+step);
+
+        stepLabel.setBounds(50,30,100,20);
+
+        this.getContentPane().add(stepLabel);
 
 
         for(int i = 0;i < 4;i++){
@@ -136,24 +159,30 @@ public class GameJFrame extends JFrame implements KeyListener{
         //创建菜单选项的对象
         JMenu functionJMenu = new JMenu("功能");
         JMenu aboutJMenu = new JMenu("关于我们");
-
-
-        //创建选项下面的条目对象
-        JMenuItem replayItem = new JMenuItem("重新游戏");
-        JMenuItem reLoginItem = new JMenuItem("重新登录");
-        JMenuItem closeItem = new JMenuItem("关闭游戏");
-
-        JMenuItem accountItem = new JMenuItem("公众号");
-
-
+        JMenu changePictureJMenu = new JMenu("更换图片");
 
         //将每个选项下面的条目添加到选项当中
         functionJMenu.add(replayItem);
-        functionJMenu.add(reLoginItem);
+        // functionJMenu.add(reLoginItem);
         functionJMenu.add(closeItem);
+        functionJMenu.add(changePictureJMenu);
 
         aboutJMenu.add(accountItem);
 
+        //放入到更换图片中
+        changePictureJMenu.add(girl);
+        changePictureJMenu.add(animals);
+        changePictureJMenu.add(sport);
+
+        //给条目绑定事件
+        replayItem.addActionListener(this);
+        // reLoginItem.addActionListener(this);
+        closeItem.addActionListener(this);
+        accountItem.addActionListener(this);
+        
+        girl.addActionListener(this);
+        animals.addActionListener(this);
+        sport.addActionListener(this);
 
         //将菜单里面的两个选项添加到菜单当中
         JMenuBar.add(functionJMenu);
@@ -263,7 +292,7 @@ public class GameJFrame extends JFrame implements KeyListener{
 
             y++;
 
-            
+            step++;
         }else if(keyCode == 39){
             //右
 
@@ -283,7 +312,7 @@ public class GameJFrame extends JFrame implements KeyListener{
 
             y--;
 
-            
+            step++;
         }else if(keyCode == 38){
             //上
 
@@ -303,6 +332,8 @@ public class GameJFrame extends JFrame implements KeyListener{
 
             x++;
 
+            step++;
+
         }else if(keyCode == 40){
             //下
 
@@ -321,6 +352,8 @@ public class GameJFrame extends JFrame implements KeyListener{
             data[x-1][y] = 0;
 
             x--;
+
+            step++;
 
         }else if(keyCode == 65){
             //A
@@ -350,6 +383,107 @@ public class GameJFrame extends JFrame implements KeyListener{
         }
         return true;
     }
+
+    //重写选项下面的条目事件监听
+    //ActionListener
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        //获取事件源
+        Object obj = e.getSource();
+
+        if(obj == replayItem){
+            //重新游戏
+
+            System.out.println("重新游戏");
+            
+            step = 0;
+
+            initData();
+
+            initImage();
+
+        }
+        // else if(obj == reLoginItem){
+        //     //重新登录
+        //     this.setVisible(false);
+
+        //     new LoginJFrame();
+
+        // }
+        else if(obj == closeItem){
+            //关闭游戏
+            System.exit(0);
+
+        }else if(obj == accountItem){
+            //公众号
+            JDialog dialog = new JDialog();
+
+            //弹框添加图片
+            JLabel jLabel = new JLabel(new ImageIcon("image/about.jpg"));
+
+            jLabel.setBounds(0,0,258,258);
+
+            //弹框添加图片
+            dialog.getContentPane().add(jLabel);
+
+            //弹框大小
+            dialog.setSize(344,344);
+
+            //弹框置顶
+            dialog.setAlwaysOnTop(true);
+
+            //弹框居中
+            dialog.setLocationRelativeTo(null);
+
+            //弹框设置为模态  弹框不关闭则无法操作下面界面
+            dialog.setModal(true);
+
+            //弹框可见
+            dialog.setVisible(true);
+
+
+        }else if(obj == girl){
+            //美女
+            System.out.println("美女");
+            //从13组美女中随机选择一组
+            Random random = new Random();
+            int index = random.nextInt(13);
+            path = "image/girl/girl" + index + "/";
+            step = 0;
+
+            System.out.println(path);
+            initData();
+
+            initImage();
+
+        }else if(obj == animals){
+            //动物
+            System.out.println("动物");
+            //从13组动物中随机选择一组
+            Random random = new Random();
+            int index = random.nextInt(8);
+            path = "image/animal/animal" + index + "/";
+            step = 0;
+
+            initData();
+
+            initImage();
+        }else if(obj == sport){
+            //运动
+            System.out.println("运动");
+            //从13组运动中随机选择一组
+            Random random = new Random();
+            int index = random.nextInt(10);
+            path = "image/sport/sport" + index + "/";
+            step = 0;
+
+            initData();
+
+            initImage();
+        }
+    }
+
+
 
 
 }
